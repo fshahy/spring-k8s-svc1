@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: spring-k8s-svc1
+  labels:
+    name: svc1
+spec:
+  containers:
+    - name: spring-k8s
+      image: fshahy/spring-k8s-svc1:1.0.0
+      ports:
+      - containerPort: 9090
+        protocol: TCP
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: spring-k8s-svc1-rc
+spec:
+  replicas: 1
+  selector:
+    name: svc1
+  template:
+    metadata:
+      labels:
+        name: svc1
+    spec:
+      containers:
+      - name: spring-k8s
+        image: fshahy/spring-k8s-svc1:1.0.0
+        ports:
+          - containerPort: 9090
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-k8s-svc1
+spec:
+  ports:
+    - port: 9090
+      targetPort: 9090
+  selector:
+    name: svc1
